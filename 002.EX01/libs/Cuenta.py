@@ -1,37 +1,44 @@
 from libs.Cliente import Cliente
 from libs.Movimiento import Movimiento
-# from Cliente import Cliente
-# from Movimiento import Movimiento
 
 class Cuenta():
     
-    numero_cuenta:int = 1000
-    coleccion_cuentas = {}
+    __numero_cuenta:int = 1000
+    __coleccion_cuentas = {}
     
     def __init__(self, titular:Cliente, saldo:float, tipo = "Ahorros"):
         self.__titular:Cliente = titular
         self.__saldo: float = saldo
         self.__movimientos: list = []
         self.__tipo:str = tipo
-        self.__class__.numero_cuenta += 1
-        self.__numero: int = self.__class__.numero_cuenta
-        self.__class__.setColeccionCuentas(self)
+        self.__class__.__aumentaID()
+        self.__numero: int = self.__class__.__obtenerId(self.__class__)
+        self.__class__.__setColeccionCuentas(self)
     
     def __str__(self):
-        # return f"Cuenta {self.__tipo} no.: {self.__numero:>05}, titular: {self.__titular}, el saldo actual es: {self.__saldo}. Se han realizado {len(self.__movimientos)} movimientos"
         return f"Cuenta {self.__tipo} no.: {self.__numero}, titular: {self.__titular}, el saldo actual es: {self.__saldo}. Se han realizado {len(self.__movimientos)} movimientos"
     
     def __repr__(self):
-        # return f"Cuenta {self.__tipo} no.: {self.__numero:>05}, titular: {self.__titular}, el saldo actual es: {self.__saldo}. Se han realizado {len(self.__movimientos)} movimientos"
         return f"Cuenta {self.__tipo} no.: {self.__numero}, titular: {self.__titular}, el saldo actual es: {self.__saldo}. Se han realizado {len(self.__movimientos)} movimientos"
     
     @classmethod
-    def getColeccionCuentas(cls):
-        return cls.coleccion_cuentas
+    def __aumentaID(cls):
+        """Aumenta el numero de la cuenta (ID) a medida de que se van creando cuentas en el banco
+        
+        :param cls: clase
+        """
+        cls.__numero_cuenta += 1
+    
+    def __obtenerId(cls):
+        return cls.__numero_cuenta
     
     @classmethod
-    def setColeccionCuentas(cls, obj_cuenta):
-        cls.coleccion_cuentas[obj_cuenta.numero] = obj_cuenta.__str__
+    def getColeccionCuentas(cls):
+        return cls.__coleccion_cuentas
+    
+    @classmethod
+    def __setColeccionCuentas(cls, obj_cuenta):
+        cls.__coleccion_cuentas[obj_cuenta.numero] = obj_cuenta.__str__()
         
     @property
     def numero(self) -> int:

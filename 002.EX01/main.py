@@ -15,5 +15,4 @@ cuenta3 = Cuenta(cliente3,0)
 
 print(cuenta1)
 
-print(Cuenta.coleccion_cuentas)
-print(cuenta1.__class__)
+print("La colección de cuentas:", Cuenta.getColeccionCuentas())
