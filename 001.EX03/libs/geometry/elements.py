@@ -23,19 +23,27 @@ class Point:
 
     @property
     def coordinates(self) -> tuple:
-        return self.__coordinates()
+        return self.__coordinates
     
     @coordinates.setter
-    def coordinates(self,x,y) -> None:
-        self.__coordinates:tuple = tuple([x,y])
+    def coordinates(self,coor) -> None:
+        self.__coordinates = tuple(coor)
         
     @property
-    def x(self) -> tuple:
+    def x(self) -> float:
         return self.__coordinates[0]
     
+    @x.setter
+    def x(self, x) -> float:
+        self.coordinates = (x, self.y)
+    
     @property
-    def y(self) -> tuple:
+    def y(self) -> float:
         return self.__coordinates[1]
+    
+    @y.setter
+    def y(self, y) -> float:
+        self.coordinates = (self.x, y)
     
     @staticmethod
     def distance_between_points(P:tuple, Q:tuple) -> float:
@@ -71,15 +79,19 @@ class Line:
         
 class Rectangle:
     """Define un rectángulo a partir de 4 vértices
+       :param vertex_1: vértice inferior izquierdo 
+       los demás van en el sentido de las manecillas del reloj
     """
-    
-    # def __init__(self, height:float, base:float) -> None:
-    #     self.__height: float  = height
-    #     self.__base: float    = base
         
-    def __init__(self, vertex_1:Point, vertex_2:Point, vertex_3:Point, vertex_4:Point) -> None:
-        self.__vertexes:tuple = tuple([vertex_1,vertex_2,vertex_3,vertex_4])
+    def __init__(self, /, vertex_1:Point = tuple(), vertex_2:Point = tuple(), vertex_3:Point = tuple(), vertex_4:Point = tuple(), *, height:float = 0, base:float = 0) -> None:
         
+        if vertex_1 and vertex_2 and vertex_3 and vertex_4:
+            self.__vertexes:tuple = tuple([vertex_1,vertex_2,vertex_3,vertex_4])
+        elif height and base:
+            self.__height:float = height
+            self.__base:float   = base
+            self.__vertexes:tuple = tuple([Point(),Point(0,height),Point(base,height),Point(base,0)])
+            
     def __str__(self) -> str:
         return f"[str] The vertexes of the rectangle are: {self.vertexes}"
     
@@ -87,23 +99,34 @@ class Rectangle:
         return f"P:{self.vertexes}"        
     
     @property    
-    def vertexes(self):
+    def vertexes(self) -> tuple:
         return self.__vertexes
     
-    def height(self):
-        return Line.length_of_segment(self.__vertexes[0], self.__vertexes[1])
+    def height(self) -> float:
+        if getattr(self, "_Rectangle__height", None):
+            return self.__height
+        else:
+            self.__height = Line.length_of_segment(self.__vertexes[0], self.__vertexes[1])
+            return self.__height
 
-    # @calculus
-    def base(self):
-        return Line.length_of_segment(self.__vertexes[0], self.__vertexes[3])
+    def base(self) -> float:
+        if getattr(self, "_Rectangle__base", None):
+            return self.__base
+        else:
+            self.__base = Line.length_of_segment(self.__vertexes[0], self.__vertexes[3])
+            return self.__base
 
-    @staticmethod
-    def area():
-        pass
+    def area(self) -> float:
+        return self.height() * self.base()
     
-    
-    # @coordinates.setter
-    # def coordinates(self,x,y):
-    #     self.__coordinates:tuple = tuple([x,y])
-        
-    
+    def traslacion(self, x_des:float, y_des:float) -> None:
+        """Traslada un rectangulo en el plano
+
+        :param x_des: desplazamiento horizontal
+        :type x_des: float
+        :param y_des: desplazamiento vertical
+        :type y_des: float
+        """
+        for punto in self.__vertexes:
+            punto.x = punto.x + x_des
+            punto.y = punto.y + y_des
